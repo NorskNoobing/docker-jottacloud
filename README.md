@@ -2,11 +2,11 @@
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
-Docker of Jottacloud client side backup daemon with jotta-cli and jottad inside.
+Docker image with Jottacloud client side backup daemon, using jotta-cli and jottad.
 
 Jottacloud is a Cloud Storage (backup) service provider, which offers [unlimited storage space](https://www.jottacloud.com/en/pricing.html) for personal use.
 
-Support platforms: linux/amd64, linux/arm64
+Supported platforms: linux/amd64, linux/arm64
 
 **IMPORTANT: Upstream BREAKING CHANGES in 0.12 (Version 0.12.50392 - 2021-10-26)**
 https://docs.jottacloud.com/en/articles/1461561-release-notes-for-jottacloud-cli
@@ -19,7 +19,8 @@ https://docs.jottacloud.com/en/articles/1461561-release-notes-for-jottacloud-cli
 docker pull bluet/jottacloud
 ```
 
-## Use
+## Setup
+### docker run
 To start a long running jottacloud backup client, the easy way:
 ```
 docker run \
@@ -43,7 +44,12 @@ docker run \
    --name jottacloud \
    bluet/jottacloud
 ```
+### docker compose
+1. Copy the example `docker-compose.yml` and `.env` files.
+2. Change the values of the `.env` file to your liking.
+3. Run `docker compose up -d` from the same folder that your compose and env files are in.
 
+## Use
 For debugging:
 ```
 docker run -it bluet/jottacloud bash
@@ -54,31 +60,27 @@ docker exec -it jottacloud bash
 ```
 
 ## Volume mount-point
-Must-have: `/data/jottad` and `/backup/`.
-
-Path | Description
------------- | -------------
-/data/jottad | Config and data. In order to keep login status and track backup progress, please use a persistent volume.
-/data/jottad/.ignore | exclude pattern [#Exclude]
-/data/jottad/jottad.env | Environment variables for jottad (jotta-cli) container
-/backup/ | Data you want to backup. ex, `-v /home/:/backup/home/`, or -v `/backup/:/backup/`.
+Path | Description | Required |
+------------ | ------------ | :------------: |
+`/data/jottad` | Config and data. In order to keep login status and track backup progress, please use a persistent volume. | ✔ |
+`/data/jottad/.ignore` | exclude pattern [#Exclude]
+`/data/jottad/jottad.env` | Environment variables for jottad (jotta-cli) container
+`/backup/` | Data you want to backup. ex, `-v /home/:/backup/home/`, or -v `/backup/:/backup/`. | ✔ |
 
 ## ENV
-Must-have: `JOTTA_TOKEN` and `JOTTA_DEVICE`.
-
 Environment variables loading sequence and priority:
-1. Default values. (In Dockerfile)
-2. Set by `docker run` command. (Overrides all above)
+1. Default values.
+2. Set in docker environment, by `docker run -e` parameter or docker-compose environment. (Overrides all above)
 3. `/data/jottad/jottad.env` file. (Overrides all above)
 4. Docker secret key `jotta_token`. (Overrides all above)
 
-Name | Value
------------- | -------------
-JOTTA_TOKEN | Your `Personal login token`. Please obtain it from Jottacloud dashboard [Settings -> Security](https://www.jottacloud.com/web/secure). This will only show once and can only be used in a short time, so please use persistent volume on `/data/jottad/` to save your login status.
-JOTTA_DEVICE | Device name of the backup machine.  Used for identifying which machine these backup data belongs to.
-JOTTA_SCANINTERVAL | Interval time of the scan-and-backup. Can be `1h`, `30m`, or `0` for realtime monitoing.
-LOCALTIME | Local timezone. ex, `Asia/Taipei`
-STARTUP_TIMEOUT | how many second to wait before retry startup.
+Name | Value | Default | Required |
+------------ | ------------ | :------------: | :------------: |
+JOTTA_TOKEN | Your `Personal login token`. Please obtain it from Jottacloud dashboard [Settings -> Security](https://www.jottacloud.com/web/secure). This will only show once and can only be used in a short time, so please use persistent volume on `/data/jottad/` to save your login status. | `N/A` | ✔ |
+JOTTA_DEVICE | Device name of the backup machine.  Used for identifying which machine these backup data belongs to. | `docker-jottacloud` | ✔ |
+JOTTA_SCANINTERVAL | Interval time of the scan-and-backup. Can be `1h`, `30m`, or `0` for realtime monitoing. | `12h`
+LOCALTIME | Local timezone. ex, `Asia/Taipei` | `Asia/Taipei`
+STARTUP_TIMEOUT | How many seconds to wait before retrying startup. | `15`
 
 
 ## Exclude
