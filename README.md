@@ -45,7 +45,7 @@ docker run \
    bluet/jottacloud
 ```
 ### docker compose
-1. Copy the example `docker-compose.yml` and `.env` files.
+1. Copy the example [`docker-compose.yml`](examples/docker-compose.yml) and [`.env`](examples/.env) files.
 2. Change the values of the `.env` file to your liking.
 3. Run `docker compose up -d` from the same folder that your compose and env files are in.
 

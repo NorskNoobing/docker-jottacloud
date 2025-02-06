@@ -1,0 +1,12 @@
+services:
+  jotta-cli:
+    container_name: jotta-cli
+    image: bluet/jottacloud:latest
+    env_file: .env
+    volumes:
+      - ./config:/data/jottad #Config and data
+      - ./.ignore:/data/jottad/.ignore #(Optional) File with backup exclusions
+      - ./jottad.env:/data/jottad/jottad.env #(Optional) Environment variables for jottad (jotta-cli) container
+      # mount all backup files and folders to the internal /backup/ dir
+      # add more lines like this for multiple backup files/folders 
+      - /home/:/backup/home
