@@ -69,7 +69,7 @@ Path | Description | Required |
 
 ## ENV
 Environment variables loading sequence and priority:
-1. Default values.
+1. Default values (In Dockerfile).
 2. Set in docker environment, by `docker run -e` parameter or docker-compose environment. (Overrides all above)
 3. `/data/jottad/jottad.env` file. (Overrides all above)
 4. Docker secret key `jotta_token`. (Overrides all above)
