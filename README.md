@@ -49,7 +49,7 @@ docker run \
 2. Change the values of the `.env` file to your liking.
 3. Run `docker compose up -d` from the same folder that your compose and env files are in.
 
-## Use
+## Usage
 For debugging:
 ```
 docker run -it bluet/jottacloud bash
